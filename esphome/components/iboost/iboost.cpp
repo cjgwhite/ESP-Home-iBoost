@@ -392,8 +392,10 @@ namespace esphome {
                     break;
 
                 } else if (packet[2] == PACKET_SENDER) { // sender packet
-                    if (packet[12] == 0x01) batteryLow = true;
-                    else batteryLow = false;
+                    // Battery low flag is bit 1 of SENDER packet byte[3]
+                    static const uint8_t SENDER_FLAG_BATTERY_LOW = 0x02;
+
+                    batteryLow = (packet[3] & SENDER_FLAG_BATTERY_LOW) != 0;   
                 }
                 rxState = RXSTATE_WAIT_FOR_PACKET; // no update so wait for a new packet
                 break;
